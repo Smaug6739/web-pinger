@@ -10,7 +10,7 @@ Type : Object
 | PARAMETER | TYPE   |OPTIONAL| DEFAULT |DESCRIPTION
 |-----------|--------|--------|---------|-----------|
 | interval  | number |    ✔   |  3000ms | Interval for check site | 
-| retries   | number |    ✔   |    3    | Retries before create outage | 
+| retries   | number |    ✓   |    3    | Retries before create outage | 
 
 #### Methods :
 `start()` start the monitoring of website <br>
