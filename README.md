@@ -9,7 +9,7 @@ Type : Object
 
 | PARAMETER | TYPE   |OPTIONAL| DEFAULT |DESCRIPTION
 |-----------|--------|--------|---------|-----------|
-| interval  | number |    ✔   |  3000ms | Interval for check site | 
+| interval  | number |    ✓   |  3000ms | Interval for check site | 
 | retries   | number |    ✓   |    3    | Retries before create outage | 
 
 #### Methods :
