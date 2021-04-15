@@ -13,11 +13,11 @@ export default class WebPing extends EventEmitter {
 	public uptime: number = config.default.uptime;
 	public ping: number = config.default.ping;
 	public unavailability: number = config.default.unavailability;
+
 	private startTime: number = Date.now();;
 	private lastSuccessCheck: number = Date.now();;
-	//private database?: (IObject | boolean);
-
-	private intervalFunction: any
+	private intervalFunction: any;
+	private failures: number = config.default.failures
 	constructor(url: string, options?: IOptions, database?: IObject) {
 		super()
 		if (!url) throw new Error('URL must be provied')
@@ -30,31 +30,35 @@ export default class WebPing extends EventEmitter {
 			}
 			if (options.retries) this.retries = options.retries
 		}
-		//this.database = database || false;
 	}
 	private fetchURL() {
 		const startPing: number = Date.now()
 		fetch(this.url)
 			.then(res => {
 				const endPing: number = Date.now()
+				this.ping = endPing - startPing
 				if (res.status !== 200) {
-					this.available = false;
-					this.unavailability = Date.now() - this.lastSuccessCheck
-					const outage: IObject = {
-						statusCode: res.status,
-						url: this.url,
-						ping: endPing - startPing,
-						unavailability: this.unavailability
+					this.failures++;
+					if (this.failures > this.retries) {
+						this.available = false;
+						this.unavailability = Date.now() - this.lastSuccessCheck
+						const outage: IObject = {
+							statusCode: res.status,
+							url: this.url,
+							ping: this.ping,
+							unavailability: this.unavailability
+						}
+						this.emit('outage', outage);
 					}
-					this.emit('outage', outage);
 				} else {
+					this.failures = 0;
 					this.available = true;
 					this.uptime = Date.now() - this.startTime;
 					this.lastSuccessCheck = Date.now()
 					const up: IObject = {
 						statusCode: res.status,
 						url: this.url,
-						ping: endPing - startPing,
+						ping: this.ping,
 						uptime: this.uptime
 					}
 					this.emit('up', up);
@@ -62,10 +66,16 @@ export default class WebPing extends EventEmitter {
 			})
 	}
 	setTinterval(newInterval: number): (boolean) {
-		if (!newInterval) throw new Error('Missing new interval param');
-		if (newInterval < config.minInterval) throw new RangeError(`INVALID_OPTION interval must be greater than ${config.minInterval}ms`)
+		if (!newInterval) throw new Error('New interval parameter must be provied.');
+		if (newInterval < config.minInterval) throw new RangeError(`INVALID_PARAMETER interval must be greater than ${config.minInterval}ms`)
 		this.interval = newInterval
 		return true;
+	}
+	setURL(newURL: string | number): (boolean) {
+		if (!newURL) throw new Error('MISSING_PARAMETER newURL must be provied')
+		if (typeof newURL !== 'string') throw new TypeError('INVALID_PARAMETER newURL must be a string.')
+		this.url = newURL
+		return true
 	}
 	start(): boolean {
 		if (!this.url) throw new Error("Missing URL parameter.")

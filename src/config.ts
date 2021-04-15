@@ -7,6 +7,7 @@ interface Iconfig {
 		uptime: 0
 		ping: number
 		unavailability: number
+		failures: number
 	}
 }
 
@@ -19,5 +20,6 @@ export const config: Iconfig = {
 		uptime: 0,
 		ping: 0,
 		unavailability: 0,
+		failures: 0,
 	}
 }

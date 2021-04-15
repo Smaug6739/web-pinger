@@ -14,6 +14,7 @@ class WebPing extends events_1.EventEmitter {
         this.unavailability = config_1.config.default.unavailability;
         this.startTime = Date.now();
         this.lastSuccessCheck = Date.now();
+        this.failures = config_1.config.default.failures;
         if (!url)
             throw new Error('URL must be provied');
         this.url = url;
@@ -28,7 +29,6 @@ class WebPing extends events_1.EventEmitter {
             if (options.retries)
                 this.retries = options.retries;
         }
-        //this.database = database || false;
     }
     ;
     ;
@@ -37,25 +37,30 @@ class WebPing extends events_1.EventEmitter {
         node_fetch_1.default(this.url)
             .then(res => {
             const endPing = Date.now();
+            this.ping = endPing - startPing;
             if (res.status !== 200) {
-                this.available = false;
-                this.unavailability = Date.now() - this.lastSuccessCheck;
-                const outage = {
-                    statusCode: res.status,
-                    url: this.url,
-                    ping: endPing - startPing,
-                    unavailability: this.unavailability
-                };
-                this.emit('outage', outage);
+                this.failures++;
+                if (this.failures > this.retries) {
+                    this.available = false;
+                    this.unavailability = Date.now() - this.lastSuccessCheck;
+                    const outage = {
+                        statusCode: res.status,
+                        url: this.url,
+                        ping: this.ping,
+                        unavailability: this.unavailability
+                    };
+                    this.emit('outage', outage);
+                }
             }
             else {
+                this.failures = 0;
                 this.available = true;
                 this.uptime = Date.now() - this.startTime;
                 this.lastSuccessCheck = Date.now();
                 const up = {
                     statusCode: res.status,
                     url: this.url,
-                    ping: endPing - startPing,
+                    ping: this.ping,
                     uptime: this.uptime
                 };
                 this.emit('up', up);
@@ -64,10 +69,18 @@ class WebPing extends events_1.EventEmitter {
     }
     setTinterval(newInterval) {
         if (!newInterval)
-            throw new Error('Missing new interval param');
+            throw new Error('New interval parameter must be provied.');
         if (newInterval < config_1.config.minInterval)
-            throw new RangeError(`INVALID_OPTION interval must be greater than ${config_1.config.minInterval}ms`);
+            throw new RangeError(`INVALID_PARAMETER interval must be greater than ${config_1.config.minInterval}ms`);
         this.interval = newInterval;
+        return true;
+    }
+    setURL(newURL) {
+        if (!newURL)
+            throw new Error('MISSING_PARAMETER newURL must be provied');
+        if (typeof newURL !== 'string')
+            throw new TypeError('INVALID_PARAMETER newURL must be a string.');
+        this.url = newURL;
         return true;
     }
     start() {

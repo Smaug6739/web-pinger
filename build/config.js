@@ -10,5 +10,6 @@ exports.config = {
         uptime: 0,
         ping: 0,
         unavailability: 0,
+        failures: 0,
     }
 };
