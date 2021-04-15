@@ -1,6 +1,8 @@
 import WebPing from '../index';
 
-const Ping = new WebPing("https://french-gaming-family.com")
+const Ping = new WebPing("https://french-gaming-family.com", {
+	interval: 3000
+})
 
 Ping.start()
 
@@ -11,8 +13,3 @@ Ping.on('outage', (outage) => {
 Ping.on('up', (up) => {
 	console.log(`UP\nStatus code : ${up.statusCode}\nURL: ${up.url}\nPing: ${up.ping}\nUptime: ${Ping.uptime}\n\n`);
 })
-Ping.setTinterval(10000)
-setTimeout(() => {
-	Ping.restart()
-	console.log('restarting')
-}, 5000)

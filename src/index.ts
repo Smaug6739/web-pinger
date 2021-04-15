@@ -1,4 +1,4 @@
-import { IObject } from './types';
+import { IObject, IOptions } from './types';
 import { config } from './config'
 
 import fetch from 'node-fetch';
@@ -7,29 +7,32 @@ import { EventEmitter } from 'events';
 
 export default class WebPing extends EventEmitter {
 	public url: string;
-	public interval: number;
-	public retries: number;
-	public available: Boolean;
-	public uptime: number;
-	public unavailability: number;
-	private startTime: number;
-	private lastSuccessCheck: number;
-	private database?: (IObject | Boolean);
+	public interval: number = config.default.interval;
+	public retries: number = config.default.retries;
+	public available: boolean = config.default.available;
+	public uptime: number = config.default.uptime;
+	public ping: number = config.default.ping;
+	public unavailability: number = config.default.unavailability;
+	private startTime: number = Date.now();;
+	private lastSuccessCheck: number = Date.now();;
+	//private database?: (IObject | boolean);
 
-	private Finterval: any
-	constructor(url: string, interval?: number, retries?: number, database?: IObject) {
+	private intervalFunction: any
+	constructor(url: string, options?: IOptions, database?: IObject) {
 		super()
+		if (!url) throw new Error('URL must be provied')
 		this.url = url
-		this.interval = interval || 3000
-		this.retries = retries || 3
-		this.database = database || false
-		this.available = false;
-		this.uptime = 0;
-		this.unavailability = 0;
-		this.startTime = Date.now();
-		this.lastSuccessCheck = Date.now();
+		if (options) {
+			if (options.interval) {
+				if (typeof options.interval !== 'number') throw new TypeError('INVALID_OPTION interval option must be a number.')
+				if (options.interval < config.minInterval) throw new RangeError(`INVALID_OPTION interval must be greater than ${config.minInterval}ms`)
+				this.interval = options.interval
+			}
+			if (options.retries) this.retries = options.retries
+		}
+		//this.database = database || false;
 	}
-	private ping() {
+	private fetchURL() {
 		const startPing: number = Date.now()
 		fetch(this.url)
 			.then(res => {
@@ -58,25 +61,28 @@ export default class WebPing extends EventEmitter {
 				}
 			})
 	}
-	setTinterval(newInterval: number): (Error | Boolean) {
+	setTinterval(newInterval: number): (boolean) {
 		if (!newInterval) throw new Error('Missing new interval param');
-		if (newInterval < config.minInterval) throw new Error(`Minimal time of interval check is ${config.minInterval}`)
+		if (newInterval < config.minInterval) throw new RangeError(`INVALID_OPTION interval must be greater than ${config.minInterval}ms`)
 		this.interval = newInterval
 		return true;
 	}
-	start() {
-		if (!this.url) return new Error("Missing URL parameter.")
-		this.Finterval = setInterval(() => {
-			this.ping()
+	start(): boolean {
+		if (!this.url) throw new Error("Missing URL parameter.")
+		this.intervalFunction = setInterval(() => {
+			this.fetchURL()
 		}, this.interval)
+		return true;
 	}
-	restart() {
-		clearInterval(this.Finterval)
+	restart(): boolean {
+		clearInterval(this.intervalFunction)
 		this.emit('restart')
 		this.start()
+		return true;
 	}
-	stop() {
-		clearInterval(this.Finterval)
+	stop(): boolean {
+		clearInterval(this.intervalFunction)
 		this.emit('stopped', { reason: 'Stopped by client' })
+		return true;
 	}
 }

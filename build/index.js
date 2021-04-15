@@ -4,19 +4,35 @@ const config_1 = require("./config");
 const node_fetch_1 = require("node-fetch");
 const events_1 = require("events");
 class WebPing extends events_1.EventEmitter {
-    constructor(url, interval, retries, database) {
+    constructor(url, options, database) {
         super();
-        this.url = url;
-        this.interval = interval || 3000;
-        this.retries = retries || 3;
-        this.database = database || false;
-        this.available = false;
-        this.uptime = 0;
-        this.unavailability = 0;
+        this.interval = config_1.config.default.interval;
+        this.retries = config_1.config.default.retries;
+        this.available = config_1.config.default.available;
+        this.uptime = config_1.config.default.uptime;
+        this.ping = config_1.config.default.ping;
+        this.unavailability = config_1.config.default.unavailability;
         this.startTime = Date.now();
         this.lastSuccessCheck = Date.now();
+        if (!url)
+            throw new Error('URL must be provied');
+        this.url = url;
+        if (options) {
+            if (options.interval) {
+                if (typeof options.interval !== 'number')
+                    throw new TypeError('INVALID_OPTION interval option must be a number.');
+                if (options.interval < config_1.config.minInterval)
+                    throw new RangeError(`INVALID_OPTION interval must be greater than ${config_1.config.minInterval}ms`);
+                this.interval = options.interval;
+            }
+            if (options.retries)
+                this.retries = options.retries;
+        }
+        //this.database = database || false;
     }
-    ping() {
+    ;
+    ;
+    fetchURL() {
         const startPing = Date.now();
         node_fetch_1.default(this.url)
             .then(res => {
@@ -50,25 +66,28 @@ class WebPing extends events_1.EventEmitter {
         if (!newInterval)
             throw new Error('Missing new interval param');
         if (newInterval < config_1.config.minInterval)
-            throw new Error(`Minimal time of interval check is ${config_1.config.minInterval}`);
+            throw new RangeError(`INVALID_OPTION interval must be greater than ${config_1.config.minInterval}ms`);
         this.interval = newInterval;
         return true;
     }
     start() {
         if (!this.url)
-            return new Error("Missing URL parameter.");
-        this.Finterval = setInterval(() => {
-            this.ping();
+            throw new Error("Missing URL parameter.");
+        this.intervalFunction = setInterval(() => {
+            this.fetchURL();
         }, this.interval);
+        return true;
     }
     restart() {
-        clearInterval(this.Finterval);
+        clearInterval(this.intervalFunction);
         this.emit('restart');
         this.start();
+        return true;
     }
     stop() {
-        clearInterval(this.Finterval);
+        clearInterval(this.intervalFunction);
         this.emit('stopped', { reason: 'Stopped by client' });
+        return true;
     }
 }
 exports.default = WebPing;
