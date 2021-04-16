@@ -1,6 +1,6 @@
 <div align="center">
   <h1> Web-Pinger </h1>
-<img src="https://nodei.co/npm/website-pinger.png"> <br>
+  <a href="https://www.npmjs.com/package/website-pinger"><img src="https://nodei.co/npm/website-pinger.png"></a> <br>
   <a href="https://www.npmjs.com/package/website-pinger"> <img src="https://badge.fury.io/js/website-pinger.svg"> </a> 
   <a href="https://github.com/SmaugDev/web-pinger/blob/master/LICENSE"> <img src="https://img.shields.io/github/license/SmaugDev/web-pinger.svg"> </a>
   <a href="http://makeapullrequest.com"> <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"> </a>
