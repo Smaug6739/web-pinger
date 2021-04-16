@@ -19,7 +19,7 @@ export default class WebPing extends EventEmitter {
 	private lastSuccessCheck: number = Date.now();;
 	private intervalFunction: any;
 	private failures: number = config.default.failures
-	constructor(url: string, options?: IOptions, database?: IObject) {
+	constructor(url: string, options?: IOptions) {
 		super()
 		if (!url) throw new Error('URL must be provied')
 		this.url = url

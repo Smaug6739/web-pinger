@@ -4,7 +4,7 @@ const config_1 = require("./config");
 const node_fetch_1 = require("node-fetch");
 const events_1 = require("events");
 class WebPing extends events_1.EventEmitter {
-    constructor(url, options, database) {
+    constructor(url, options) {
         super();
         this.interval = config_1.config.default.interval;
         this.retries = config_1.config.default.retries;
