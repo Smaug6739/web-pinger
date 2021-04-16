@@ -3,6 +3,7 @@ interface Iconfig {
 	default: {
 		interval: number
 		retries: number
+		timeout: number
 		available: boolean
 		uptime: 0
 		ping: number
@@ -16,6 +17,7 @@ export const config: Iconfig = {
 	default: {
 		interval: 3000,
 		retries: 3,
+		timeout: 3000,
 		available: false,
 		uptime: 0,
 		ping: 0,

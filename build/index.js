@@ -8,6 +8,7 @@ class WebPing extends events_1.EventEmitter {
         super();
         this.interval = config_1.config.default.interval;
         this.retries = config_1.config.default.retries;
+        this.timeout = config_1.config.default.timeout;
         this.available = config_1.config.default.available;
         this.uptime = config_1.config.default.uptime;
         this.ping = config_1.config.default.ping;
@@ -26,25 +27,49 @@ class WebPing extends events_1.EventEmitter {
                     throw new RangeError(`INVALID_OPTION interval must be greater than ${config_1.config.minInterval}ms`);
                 this.interval = options.interval;
             }
-            if (options.retries)
+            if (options.retries) {
+                if (typeof options.interval !== 'number')
+                    throw new TypeError('INVALID_OPTION retries option must be a number.');
                 this.retries = options.retries;
+            }
+            if (options.timeout) {
+                if (typeof options.timeout !== 'number')
+                    throw new TypeError('INVALID_OPTION timeout option must be a number.');
+                this.timeout = options.timeout;
+            }
         }
     }
     ;
     ;
     fetchURL() {
         const startPing = Date.now();
-        node_fetch_1.default(this.url)
-            .then(res => {
-            const endPing = Date.now();
-            this.ping = endPing - startPing;
-            if (res.status !== 200) {
+        const timeout = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject(new Error('Timeout'));
+            }, this.timeout);
+        });
+        const fetchFunction = new Promise((resolve, reject) => {
+            node_fetch_1.default(this.url)
+                .then(res => {
+                resolve({
+                    statusCode: res.status,
+                    statusTexte: res.statusText,
+                    ping: Date.now() - startPing
+                });
+            })
+                .catch(err => reject(err));
+        });
+        Promise.race([fetchFunction, timeout])
+            .then((result) => {
+            if (result.statusCode !== 200) {
                 this.failures++;
+                console.log(`Failure : ${this.failures}`);
                 if (this.failures > this.retries) {
                     this.available = false;
                     this.unavailability = Date.now() - this.lastSuccessCheck;
                     const outage = {
-                        statusCode: res.status,
+                        status: 'outage',
+                        statusCode: result.statusCode,
                         url: this.url,
                         ping: this.ping,
                         unavailability: this.unavailability
@@ -58,13 +83,20 @@ class WebPing extends events_1.EventEmitter {
                 this.uptime = Date.now() - this.startTime;
                 this.lastSuccessCheck = Date.now();
                 const up = {
-                    statusCode: res.status,
+                    status: 'success',
+                    statusCode: result.statusCode,
                     url: this.url,
                     ping: this.ping,
                     uptime: this.uptime
                 };
                 this.emit('up', up);
             }
+        })
+            .catch((error) => {
+            if (error.message.match('Timeout'))
+                console.log('Erreur, timeout dépassé');
+            else
+                console.log(`Erreur : ${error}`);
         });
     }
     setTinterval(newInterval) {
