@@ -3,7 +3,7 @@ This module is a web pinger for simplify the monitoring, and creation of status 
 
 ## Usage
 Create a new WebMonitor with an URL (string) as a parameter : new WebMonitor("https://website.com", options)
-#### Options :
+### Options :
 Type : Object
 
 
@@ -13,7 +13,7 @@ Type : Object
 | retries   | number |    ✓   |    3    | Retries before create an outage | 
 | timeout   | number |    ✓   |  3000ms | Maximum waiting time before creating an outage | 
 
-#### Events
+### Events
 `up` Emitted when site is online <br>
 Parameter : status   <br>
 
@@ -39,7 +39,7 @@ Parameter : status   <br>
 `error` Emitted when an error occurred <br>
 Parameter : error   <br>
 
-#### Properties :
+### Properties :
 
 `available` return true if site is available else return false <br>
 Type : Boolean
@@ -53,7 +53,7 @@ Type : Number or Null
 `unavailability` return the unavailability or null if it doesn't exist <br>
 Type : Number or Null
 
-#### Methods :
+### Methods :
 `start()` start the monitoring of website <br>
 Type : Boolean
 
