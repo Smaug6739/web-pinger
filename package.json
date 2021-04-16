@@ -1,16 +1,29 @@
 {
-  "name": "web-ping",
+  "name": "web-pinger",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A module for simplify the monitoring, and creation of status page.",
+  "main": "build/index.js",
   "scripts": {
     "prebuild": "rm -rf build",
     "build:watch": "tsc --watch",
     "test-code": "node ./build/test/test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SmaugDev/web-pinger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SmaugDev/web-pinger/issues"
+  },
+  "keywords": [
+    "pinger",
+    "ping",
+    "monitor",
+    "monitoring"
+  ],
+  "author": "SmaugDev",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^14.14.37",
     "@types/node-fetch": "^2.5.10"

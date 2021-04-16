@@ -4,10 +4,10 @@ interface Iconfig {
 		interval: number
 		retries: number
 		timeout: number
-		available: boolean
-		uptime: 0
-		ping: number
-		unavailability: number
+		available: null
+		uptime: null
+		ping: null
+		unavailability: null
 		failures: number
 	}
 }
@@ -17,11 +17,11 @@ export const config: Iconfig = {
 	default: {
 		interval: 3000,
 		retries: 3,
-		timeout: 3,
-		available: false,
-		uptime: 0,
-		ping: 0,
-		unavailability: 0,
+		timeout: 3000,
+		available: null,
+		uptime: null,
+		ping: null,
+		unavailability: null,
 		failures: 0,
 	}
 }

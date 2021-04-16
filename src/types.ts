@@ -12,7 +12,7 @@ export interface IOutage {
 	type: string
 	statusCode: (number | undefined),
 	statusTexte: (string | undefined),
-	ping: number
+	ping: number | null
 	url: string
 	unavailability: number
 }
@@ -21,7 +21,7 @@ export interface IUp {
 	type: string
 	statusCode: (number | undefined),
 	statusTexte: (string | undefined),
-	ping: number
+	ping: number | null
 	url: string
-	uptime: number
+	uptime: number | null
 }

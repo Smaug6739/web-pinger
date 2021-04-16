@@ -1,47 +1,47 @@
-import { IObject, IOptions, IOutage, IUp } from './types';
+import { IOptions, IOutage, IUp } from './types';
 import { config } from './config'
 
 import fetch from 'node-fetch';
 
 import { EventEmitter } from 'events';
 
-export default class WebPing extends EventEmitter {
+export default class WebMonitor extends EventEmitter {
 	public url: string;
 	public interval: number = config.default.interval;
 	public retries: number = config.default.retries;
 	public timeout: number = config.default.timeout
-	public available: boolean = config.default.available;
-	public uptime: number = config.default.uptime;
-	public ping: number = config.default.ping;
-	public unavailability: number = config.default.unavailability;
+	public available: (boolean | null) = config.default.available;
+	public uptime: (number | null) = config.default.uptime;
+	public ping: (number | null) = config.default.ping;
+	public unavailability: (number | null) = config.default.unavailability;
 
 	private startTime: number = Date.now();;
 	private lastSuccessCheck: number = Date.now();;
 	private intervalFunction: any;
-	private failures: number = config.default.failures
+	private failures: (number) = config.default.failures
 	constructor(url: string, options?: IOptions) {
 		super()
 		if (!url) throw new Error('URL must be provied')
 		this.url = url
 		if (options) {
 			if (options.interval) {
-				if (typeof options.interval !== 'number') throw new TypeError('INVALID_OPTION interval option must be a number.')
+				if (typeof options.interval !== 'number') throw new TypeError('INVALID_OPTION interval option must be a number')
 				if (options.interval < config.minInterval) throw new RangeError(`INVALID_OPTION interval must be greater than ${config.minInterval}ms`)
 				this.interval = options.interval
 			}
 			if (options.retries) {
-				if (typeof options.interval !== 'number') throw new TypeError('INVALID_OPTION retries option must be a number.')
+				if (typeof options.interval !== 'number') throw new TypeError('INVALID_OPTION retries option must be a number')
 				this.retries = options.retries
 			}
 			if (options.timeout) {
-				if (typeof options.timeout !== 'number') throw new TypeError('INVALID_OPTION timeout option must be a number.')
+				if (typeof options.timeout !== 'number') throw new TypeError('INVALID_OPTION timeout option must be a number')
 				this.timeout = options.timeout
 			}
 		}
 	}
 	private fetchURL() {
 		const startPing: number = Date.now()
-		const timeout: Promise<Error> = new Promise((resolve, reject) => {
+		const timeout: Promise<Error> = new Promise((_, reject) => {
 			setTimeout(() => {
 				reject(new Error('timeout'))
 			}, this.timeout)
@@ -60,7 +60,7 @@ export default class WebPing extends EventEmitter {
 		Promise.race([fetchFunction, timeout])
 			.then((result: any) => {
 				this.ping = result.ping
-				if (result.statusCode !== 200) {
+				if (result.statusCode > 299) {
 					this.failures++;
 					console.log(`Failure : ${this.failures}`);
 					if (this.failures > this.retries) {
@@ -82,7 +82,11 @@ export default class WebPing extends EventEmitter {
 						this.emitOutage(undefined, 'timeout')
 					}
 				}
-				else console.log(`Erreur : ${error}`);
+				else {
+					if (error.message.match('Only absolute URLs are supported')) return this.emit('error', TypeError('INVALID_PARAMETER Only absolute URLs are supported'))
+					if (error.message.match('ECONNREFUSED')) return this.emit('error', TypeError(`INVALID_PARAMETER Unknown host ${this.url}`))
+					this.emit('error', error)
+				}
 			})
 	}
 	private emitOutage(statusCode?: number, statusText?: string,) {
@@ -140,6 +144,17 @@ export default class WebPing extends EventEmitter {
 		clearInterval(this.intervalFunction)
 		this.emit('stopped', { reason: 'Stopped by client' })
 		return true;
+	}
+	get infos() {
+		return {
+			"url": this.url,
+			"interval": this.interval,
+			"timeout": this.timeout,
+			"available": this.available,
+			"ping": this.ping,
+			"uptime:": this.uptime,
+			"unavailability": this.unavailability
+		}
 	}
 }
 
