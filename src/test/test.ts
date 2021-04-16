@@ -1,4 +1,4 @@
-import WebMonitor from '../index';
+import { WebMonitor } from '../index';
 
 const Monitor = new WebMonitor("https://api.french-gaming-family.com", {
 	interval: 3000,

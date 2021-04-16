@@ -1,6 +1,6 @@
 {
-  "name": "web-pinger",
-  "version": "1.0.0",
+  "name": "website-pinger",
+  "version": "1.0.1",
   "description": "A module for simplify the monitoring, and creation of status page.",
   "main": "build/index.js",
   "scripts": {

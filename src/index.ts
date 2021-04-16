@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 
 import { EventEmitter } from 'events';
 
-export default class WebMonitor extends EventEmitter {
+export class WebMonitor extends EventEmitter {
 	public url: string;
 	public interval: number = config.default.interval;
 	public retries: number = config.default.retries;
