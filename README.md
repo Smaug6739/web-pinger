@@ -6,7 +6,7 @@
   <a href="http://makeapullrequest.com"> <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"> </a>
 
 </div>
-
+<br>
 
 
 This module is a web pinger for simplify the monitoring, and creation of status page.
