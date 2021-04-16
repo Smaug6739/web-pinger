@@ -10,7 +10,8 @@ Type : Object
 | PARAMETER | TYPE   |OPTIONAL| DEFAULT |DESCRIPTION
 |-----------|--------|--------|---------|-----------|
 | interval  | number |    ✓   |  3000ms | Interval for check site | 
-| retries   | number |    ✓   |    3    | Retries before create outage | 
+| retries   | number |    ✓   |    3    | Retries before create an outage | 
+| timeout   | number |    ✓   |  3000ms | Maximum waiting time before creating an outage | 
 
 #### Methods :
 `start()` start the monitoring of website <br>
@@ -23,4 +24,7 @@ Type : Boolean
 Type : Boolean
 
 `setInterval(newInterval)` change the interval check <br>
+Type : Boolean
+
+`setURL(newURL)` change the ping url <br>
 Type : Boolean

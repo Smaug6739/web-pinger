@@ -1,7 +1,7 @@
-import { IObject, IOptions, IResponce } from './types';
+import { IObject, IOptions, IOutage, IUp } from './types';
 import { config } from './config'
 
-import fetch, { Response } from 'node-fetch';
+import fetch from 'node-fetch';
 
 import { EventEmitter } from 'events';
 
@@ -43,15 +43,15 @@ export default class WebPing extends EventEmitter {
 		const startPing: number = Date.now()
 		const timeout: Promise<Error> = new Promise((resolve, reject) => {
 			setTimeout(() => {
-				reject(new Error('Timeout'))
+				reject(new Error('timeout'))
 			}, this.timeout)
 		})
-		const fetchFunction: Promise<IResponce> = new Promise((resolve, reject) => {
+		const fetchFunction = new Promise((resolve, reject) => {
 			fetch(this.url)
 				.then(res => {
 					resolve({
 						statusCode: res.status,
-						statusTexte: res.statusText,
+						statusText: res.statusText,
 						ping: Date.now() - startPing
 					})
 				})
@@ -59,41 +59,57 @@ export default class WebPing extends EventEmitter {
 		})
 		Promise.race([fetchFunction, timeout])
 			.then((result: any) => {
+				this.ping = result.ping
 				if (result.statusCode !== 200) {
 					this.failures++;
 					console.log(`Failure : ${this.failures}`);
-
 					if (this.failures > this.retries) {
-						this.available = false;
-						this.unavailability = Date.now() - this.lastSuccessCheck
-						const outage: IObject = {
-							status: 'outage',
-							statusCode: result.statusCode,
-							url: this.url,
-							ping: this.ping,
-							unavailability: this.unavailability
-						}
-						this.emit('outage', outage);
+						this.emitOutage(result.statusCode, result.statusText)
 					}
 				} else {
 					this.failures = 0;
 					this.available = true;
 					this.uptime = Date.now() - this.startTime;
 					this.lastSuccessCheck = Date.now()
-					const up: IObject = {
-						status: 'success',
-						statusCode: result.statusCode,
-						url: this.url,
-						ping: this.ping,
-						uptime: this.uptime
-					}
-					this.emit('up', up);
+					this.emitUp(result.statusCode, result.statusText)
 				}
 			})
 			.catch((error) => {
-				if (error.message.match('Timeout')) console.log('Erreur, timeout dépassé');
+				if (error.message.match('timeout')) {
+					this.failures++;
+					console.log(`Failure : ${this.failures}`);
+					if (this.failures > this.retries) {
+						this.emitOutage(undefined, 'timeout')
+					}
+				}
 				else console.log(`Erreur : ${error}`);
 			})
+	}
+	private emitOutage(statusCode?: number, statusText?: string,) {
+		this.available = false;
+		this.unavailability = Date.now() - this.lastSuccessCheck
+		const outage: IOutage = {
+			type: 'outage',
+			statusCode: statusCode || undefined,
+			statusTexte: statusText || undefined,
+			url: this.url,
+			ping: this.ping,
+			unavailability: this.unavailability
+		}
+		this.emit('outage', outage);
+	}
+	private emitUp(statusCode?: number, statusText?: string,) {
+		this.available = false;
+		this.unavailability = Date.now() - this.lastSuccessCheck
+		const up: IUp = {
+			type: 'up',
+			statusCode: statusCode || undefined,
+			statusTexte: statusText || undefined,
+			url: this.url,
+			ping: this.ping,
+			uptime: this.uptime
+		}
+		this.emit('up', up);
 	}
 	setTinterval(newInterval: number): (boolean) {
 		if (!newInterval) throw new Error('New interval parameter must be provied.');

@@ -8,8 +8,20 @@ export interface IOptions {
 	timeout?: number;
 }
 
-export interface IResponce {
-	statusCode: number,
-	statusTexte: string,
+export interface IOutage {
+	type: string
+	statusCode: (number | undefined),
+	statusTexte: (string | undefined),
 	ping: number
+	url: string
+	unavailability: number
+}
+
+export interface IUp {
+	type: string
+	statusCode: (number | undefined),
+	statusTexte: (string | undefined),
+	ping: number
+	url: string
+	uptime: number
 }

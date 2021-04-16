@@ -45,7 +45,7 @@ class WebPing extends events_1.EventEmitter {
         const startPing = Date.now();
         const timeout = new Promise((resolve, reject) => {
             setTimeout(() => {
-                reject(new Error('Timeout'));
+                reject(new Error('timeout'));
             }, this.timeout);
         });
         const fetchFunction = new Promise((resolve, reject) => {
@@ -53,7 +53,7 @@ class WebPing extends events_1.EventEmitter {
                 .then(res => {
                 resolve({
                     statusCode: res.status,
-                    statusTexte: res.statusText,
+                    statusText: res.statusText,
                     ping: Date.now() - startPing
                 });
             })
@@ -61,20 +61,12 @@ class WebPing extends events_1.EventEmitter {
         });
         Promise.race([fetchFunction, timeout])
             .then((result) => {
+            this.ping = result.ping;
             if (result.statusCode !== 200) {
                 this.failures++;
                 console.log(`Failure : ${this.failures}`);
                 if (this.failures > this.retries) {
-                    this.available = false;
-                    this.unavailability = Date.now() - this.lastSuccessCheck;
-                    const outage = {
-                        status: 'outage',
-                        statusCode: result.statusCode,
-                        url: this.url,
-                        ping: this.ping,
-                        unavailability: this.unavailability
-                    };
-                    this.emit('outage', outage);
+                    this.emitOutage(result.statusCode, result.statusText);
                 }
             }
             else {
@@ -82,22 +74,46 @@ class WebPing extends events_1.EventEmitter {
                 this.available = true;
                 this.uptime = Date.now() - this.startTime;
                 this.lastSuccessCheck = Date.now();
-                const up = {
-                    status: 'success',
-                    statusCode: result.statusCode,
-                    url: this.url,
-                    ping: this.ping,
-                    uptime: this.uptime
-                };
-                this.emit('up', up);
+                this.emitUp(result.statusCode, result.statusText);
             }
         })
             .catch((error) => {
-            if (error.message.match('Timeout'))
-                console.log('Erreur, timeout dépassé');
+            if (error.message.match('timeout')) {
+                this.failures++;
+                console.log(`Failure : ${this.failures}`);
+                if (this.failures > this.retries) {
+                    this.emitOutage(undefined, 'timeout');
+                }
+            }
             else
                 console.log(`Erreur : ${error}`);
         });
+    }
+    emitOutage(statusCode, statusText) {
+        this.available = false;
+        this.unavailability = Date.now() - this.lastSuccessCheck;
+        const outage = {
+            type: 'outage',
+            statusCode: statusCode || undefined,
+            statusTexte: statusText || undefined,
+            url: this.url,
+            ping: this.ping,
+            unavailability: this.unavailability
+        };
+        this.emit('outage', outage);
+    }
+    emitUp(statusCode, statusText) {
+        this.available = false;
+        this.unavailability = Date.now() - this.lastSuccessCheck;
+        const up = {
+            type: 'up',
+            statusCode: statusCode || undefined,
+            statusTexte: statusText || undefined,
+            url: this.url,
+            ping: this.ping,
+            uptime: this.uptime
+        };
+        this.emit('up', up);
     }
     setTinterval(newInterval) {
         if (!newInterval)

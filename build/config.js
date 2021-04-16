@@ -6,7 +6,7 @@ exports.config = {
     default: {
         interval: 3000,
         retries: 3,
-        timeout: 3000,
+        timeout: 3,
         available: false,
         uptime: 0,
         ping: 0,
