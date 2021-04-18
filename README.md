@@ -8,7 +8,6 @@
 </div>
 <br>
 
-
 This module is a web pinger for simplify the monitoring, and creation of status page.
 
 ## Usage
