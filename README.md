@@ -1,14 +1,21 @@
-# Web-Pinger
+# Web ping
+
+[![NPM](https://nodei.co/npm/website-pinger.png)](https://www.npmjs.com/package/website-pinger)
+[![NPM](https://badge.fury.io/js/website-pinger.svg)](https://www.npmjs.com/package/website-pinger)
+[![LICENSE](https://img.shields.io/github/license/Smaug6739/web-pinger.svg)](https://github.com/Smaug6739/web-pinger/blob/master/LICENSE)
+[![PR-welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 This module is a web pinger for simplify the monitoring, and creation of status page.
 
 ## Usage
 
-Create a new WebMonitor with an URL (string) as a parameter : new WebMonitor("https://website.com", options)
+Create a new WebMonitor with an URL (string) as a parameter :
+
+```js
+const Monitor = new WebMonitor("https://website-example.com", options);
+```
 
 ### Options
-
-Return :
 
 Object
 
@@ -18,9 +25,14 @@ Object
 | retries   | number | ✓        | 3       | Retries before create an outage                |
 | timeout   | number | ✓        | 3000ms  | Maximum waiting time before creating an outage |
 
-### Events
+## Events
 
-`up` Emitted when site is online  
+---
+
+### up
+
+Emitted when site is online
+
 Parameter : status
 
 | PROPERTIES | TYPE   | DESCRIPTION               |
@@ -31,7 +43,10 @@ Parameter : status
 | ping       | number | The ping latency (in ms)  |
 | Uptime     | number | Availability time (in ms) |
 
-`outage` Emitted when site is have an outage  
+### outage
+
+Emitted when site is have an outage
+
 Parameter : status
 
 | PROPERTIES     | TYPE   | DESCRIPTION                 |
@@ -42,7 +57,10 @@ Parameter : status
 | ping           | number | The ping latency (in ms)    |
 | unavailability | number | Unavailability time (in ms) |
 
-`error` Emitted when an error occurred  
+### error
+
+Emitted when an error occurred
+
 Parameter : error
 
 ## Properties
@@ -158,7 +176,7 @@ Monitor.setURL("https://www.exempla-website.com");
 ```js
 const { WebMonitor } = require("web-pinger");
 
-const Monitor = new WebMonitor("https://website.com", {
+const Monitor = new WebMonitor("https://website-example.com", {
   interval: 3000,
   timeout: 5000,
 });
