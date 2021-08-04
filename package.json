@@ -11,10 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SmaugDev/web-pinger.git"
+    "url": "git+https://github.com/Smaug6739/web-pinger.git"
   },
   "bugs": {
-    "url": "https://github.com/SmaugDev/web-pinger/issues"
+    "url": "https://github.com/Smaug6739/web-pinger/issues"
   },
   "keywords": [
     "pinger",
@@ -22,7 +22,7 @@
     "monitor",
     "monitoring"
   ],
-  "author": "SmaugDev",
+  "author": "Smaug6739",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^14.14.37",
