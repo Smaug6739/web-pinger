@@ -1,13 +1,44 @@
 # Web ping
 
 [![NPM](https://nodei.co/npm/website-pinger.png)](https://www.npmjs.com/package/website-pinger)
+
 [![NPM](https://badge.fury.io/js/website-pinger.svg)](https://www.npmjs.com/package/website-pinger)
 [![LICENSE](https://img.shields.io/github/license/Smaug6739/web-pinger.svg)](https://github.com/Smaug6739/web-pinger/blob/master/LICENSE)
 [![PR-welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 This module is a web pinger for simplify the monitoring, and creation of status page.
 
+## Getting started
+
+### Instalation
+
+With npm (node packages manager) :
+
+```sh-session
+npm install web-pinger
+```
+
+With yarn :
+
+```sh-session
+yarn add web-pinger
+```
+
 ## Usage
+
+Import the module :
+
+CommonJS syntax :
+
+```js
+const { WebMonitor } = require("web-pinger");
+```
+
+Module ES syntax :
+
+```js
+import { WebMonitor } from "web-pinger";
+```
 
 Create a new WebMonitor with an URL (string) as a parameter :
 
