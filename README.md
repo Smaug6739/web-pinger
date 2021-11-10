@@ -15,13 +15,13 @@ This module is a web pinger for simplify the monitoring, and creation of status 
 With npm (node packages manager) :
 
 ```sh-session
-npm install web-pinger
+npm install website-pinger
 ```
 
 With yarn :
 
 ```sh-session
-yarn add web-pinger
+yarn add website-pinger
 ```
 
 ## Usage
@@ -31,13 +31,13 @@ Import the module :
 CommonJS syntax :
 
 ```js
-const { WebMonitor } = require("web-pinger");
+const { WebMonitor } = require("website-pinger");
 ```
 
 Module ES syntax :
 
 ```js
-import { WebMonitor } from "web-pinger";
+import { WebMonitor } from "website-pinger";
 ```
 
 Create a new WebMonitor with an URL (string) as a parameter :
@@ -205,7 +205,7 @@ Monitor.setURL("https://www.exempla-website.com");
 ## Example
 
 ```js
-const { WebMonitor } = require("web-pinger");
+const { WebMonitor } = require("website-pinger");
 
 const Monitor = new WebMonitor("https://website-example.com", {
   interval: 3000,
