@@ -2,7 +2,8 @@ import { WebMonitor } from '../index';
 
 const Monitor = new WebMonitor("https://api.french-gaming-family.com", {
 	interval: 3000,
-	timeout: 5000
+	timeout: 5000,
+	headers: { 'Cache-Control': 'no-cache' }
 })
 
 Monitor.start()

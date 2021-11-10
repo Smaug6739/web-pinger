@@ -4,6 +4,7 @@ interface Iconfig {
 		interval: number
 		retries: number
 		timeout: number
+		headers: { [key: string]: string } | undefined
 		available: null
 		uptime: null
 		ping: null
@@ -18,6 +19,7 @@ export const config: Iconfig = {
 		interval: 3000,
 		retries: 3,
 		timeout: 3000,
+		headers: undefined,
 		available: null,
 		uptime: null,
 		ping: null,
