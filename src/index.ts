@@ -100,7 +100,7 @@ export class WebMonitor extends EventEmitter {
 		const outage: IOutage = {
 			type: 'outage',
 			statusCode: statusCode || undefined,
-			statusTexte: statusText || undefined,
+			statusText: statusText || undefined,
 			url: this.url,
 			ping: this.ping,
 			unavailability: this.unavailability
@@ -113,7 +113,7 @@ export class WebMonitor extends EventEmitter {
 		const up: IUp = {
 			type: 'up',
 			statusCode: statusCode || undefined,
-			statusTexte: statusText || undefined,
+			statusText: statusText || undefined,
 			url: this.url,
 			ping: this.ping,
 			uptime: this.uptime
