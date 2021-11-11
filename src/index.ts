@@ -10,6 +10,7 @@ export class WebMonitor extends EventEmitter {
 	public interval: number = config.default.interval;
 	public retries: number = config.default.retries;
 	public timeout: number = config.default.timeout
+	public headers: ({ [key: string]: string } | undefined) = config.default.headers;
 	public available: (boolean | null) = config.default.available;
 	public uptime: (number | null) = config.default.uptime;
 	public ping: (number | null) = config.default.ping;
@@ -37,6 +38,10 @@ export class WebMonitor extends EventEmitter {
 				if (typeof options.timeout !== 'number') throw new TypeError('INVALID_OPTION timeout option must be a number')
 				this.timeout = options.timeout
 			}
+			if (options.headers) {
+				if (typeof options.headers !== 'object') throw new TypeError('INVALID_OPTION headers option must be an object')
+				this.headers = options.headers
+			}
 		}
 	}
 	private fetchURL() {
@@ -47,7 +52,7 @@ export class WebMonitor extends EventEmitter {
 			}, this.timeout)
 		})
 		const fetchFunction = new Promise((resolve, reject) => {
-			fetch(this.url)
+			fetch(this.url, { headers: this.headers })
 				.then(res => {
 					resolve({
 						statusCode: res.status,
@@ -95,7 +100,7 @@ export class WebMonitor extends EventEmitter {
 		const outage: IOutage = {
 			type: 'outage',
 			statusCode: statusCode || undefined,
-			statusTexte: statusText || undefined,
+			statusText: statusText || undefined,
 			url: this.url,
 			ping: this.ping,
 			unavailability: this.unavailability
@@ -108,7 +113,7 @@ export class WebMonitor extends EventEmitter {
 		const up: IUp = {
 			type: 'up',
 			statusCode: statusCode || undefined,
-			statusTexte: statusText || undefined,
+			statusText: statusText || undefined,
 			url: this.url,
 			ping: this.ping,
 			uptime: this.uptime
