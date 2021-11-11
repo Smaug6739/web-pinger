@@ -50,11 +50,12 @@ const Monitor = new WebMonitor("https://website-example.com", options);
 
 Object
 
-| PARAMETER | TYPE   | OPTIONAL | DEFAULT | DESCRIPTION                                    |
-| --------- | ------ | -------- | ------- | ---------------------------------------------- |
-| interval  | number | ✓        | 3000ms  | Interval for check site                        |
-| retries   | number | ✓        | 3       | Retries before create an outage                |
-| timeout   | number | ✓        | 3000ms  | Maximum waiting time before creating an outage |
+| PARAMETER | TYPE                                   | OPTIONAL | DEFAULT   | DESCRIPTION                                    |
+| --------- | -------------------------------------- | -------- | --------- | ---------------------------------------------- |
+| interval  | number                                 | ✓        | 3000ms    | Interval for check site                        |
+| retries   | number                                 | ✓        | 3         | Retries before create an outage                |
+| timeout   | number                                 | ✓        | 3000ms    | Maximum waiting time before creating an outage |
+| headers   | { [key: string]: string } \| undefined | ✓        | undefined | Additional headers to be attached to requests  |
 
 ## Events
 
