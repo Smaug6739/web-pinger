@@ -7,6 +7,7 @@ export interface IOptions {
 	retries?: number;
 	timeout?: number;
 	headers?: { [key: string]: string } | undefined;
+	catchAllErrors?: boolean;
 }
 
 export interface IOutage {
