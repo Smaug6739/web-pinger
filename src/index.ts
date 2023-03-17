@@ -11,6 +11,7 @@ export class WebMonitor extends EventEmitter {
 	public retries: number = config.default.retries;
 	public timeout: number = config.default.timeout
 	public headers: ({ [key: string]: string } | undefined) = config.default.headers;
+	public catchAllErrors: boolean = config.default.catchAllErrors;
 	public available: (boolean | null) = config.default.available;
 	public uptime: (number | null) = config.default.uptime;
 	public ping: (number | null) = config.default.ping;
@@ -41,6 +42,10 @@ export class WebMonitor extends EventEmitter {
 			if (options.headers) {
 				if (typeof options.headers !== 'object') throw new TypeError('INVALID_OPTION headers option must be an object')
 				this.headers = options.headers
+			}
+			if (options.catchAllErrors) {
+				if (typeof options.catchAllErrors !== 'boolean') throw new TypeError('INVALID_OPTION catchAllErrors option must be a boolean')
+				this.catchAllErrors = options.catchAllErrors
 			}
 		}
 	}
@@ -80,7 +85,8 @@ export class WebMonitor extends EventEmitter {
 				}
 			})
 			.catch((error) => {
-				if (error.message.match('timeout')) {
+				if (error.message.match('Only absolute URLs are supported')) return this.emit('error', TypeError('INVALID_PARAMETER Only absolute URLs are supported'))
+				else if (this.catchAllErrors || error.message.match('timeout')) {
 					this.failures++;
 					console.log(`Failure : ${this.failures}`);
 					if (this.failures > this.retries) {
@@ -88,7 +94,6 @@ export class WebMonitor extends EventEmitter {
 					}
 				}
 				else {
-					if (error.message.match('Only absolute URLs are supported')) return this.emit('error', TypeError('INVALID_PARAMETER Only absolute URLs are supported'))
 					if (error.message.match('ECONNREFUSED')) return this.emit('error', TypeError(`INVALID_PARAMETER Unknown host ${this.url}`))
 					this.emit('error', error)
 				}

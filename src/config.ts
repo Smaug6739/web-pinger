@@ -5,6 +5,7 @@ interface Iconfig {
 		retries: number
 		timeout: number
 		headers: { [key: string]: string } | undefined
+		catchAllErrors: boolean
 		available: null
 		uptime: null
 		ping: null
@@ -20,6 +21,7 @@ export const config: Iconfig = {
 		retries: 3,
 		timeout: 3000,
 		headers: undefined,
+		catchAllErrors: false,
 		available: null,
 		uptime: null,
 		ping: null,
